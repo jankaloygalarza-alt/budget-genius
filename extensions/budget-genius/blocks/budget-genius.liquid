@@ -1,0 +1,115 @@
+{% comment %}
+  Budget Genius storefront app block.
+  Talks to the app proxy at /apps/budget-genius
+{% endcomment %}
+
+{% assign min_budget = block.settings.min_budget | default: 20 %}
+{% assign max_budget = 1000 %}
+{% assign default_budget = block.settings.default_budget | default: 90 %}
+{% if default_budget > max_budget %}
+  {% assign default_budget = max_budget %}
+{% endif %}
+
+<div
+  id="BudgetGenius-{{ block.id }}"
+  class="bg-widget"
+  data-budget-genius
+  data-proxy-url="/apps/budget-genius"
+  data-min="{{ min_budget }}"
+  data-max="{{ max_budget }}"
+  data-default="{{ default_budget }}"
+>
+  <header class="bg-header">
+    <div class="bg-logo" aria-hidden="true">✦</div>
+    <div>
+      <h2 class="bg-title">{{ block.settings.heading }}</h2>
+      <p class="bg-tagline">{{ block.settings.tagline }}</p>
+    </div>
+  </header>
+
+  <label class="bg-label">Category</label>
+  <div class="bg-pills" data-categories>
+    <button type="button" class="bg-pill is-active" data-category="All">All</button>
+    <button type="button" class="bg-pill" data-category="Shoes">Shoes</button>
+    <button type="button" class="bg-pill" data-category="T-shirt">T-shirt</button>
+    <button type="button" class="bg-pill" data-category="Bag">Bag</button>
+  </div>
+
+  <div class="bg-budget-row">
+    <span class="bg-label">Budget</span>
+    <strong class="bg-budget-value" data-budget-value>${{ default_budget }}</strong>
+  </div>
+  <input
+    class="bg-slider"
+    type="range"
+    min="{{ min_budget }}"
+    max="{{ max_budget }}"
+    value="{{ default_budget }}"
+    data-budget-slider
+    aria-label="Budget"
+  >
+  <div class="bg-range">
+    <span>${{ min_budget }}</span>
+    <span>${{ max_budget }}</span>
+  </div>
+
+  <button type="button" class="bg-cta" data-recommend>
+    ✦ Show recommendations
+  </button>
+
+  <div data-results></div>
+  <p class="bg-footer" data-cart-count>0 items in cart.</p>
+</div>
+
+{% schema %}
+{
+  "name": "Budget Genius",
+  "target": "section",
+  "stylesheet": "budget-genius.css",
+  "javascript": "budget-genius.js",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Budget Genius"
+    },
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Set what you want to spend — I'll rank the best matches in stock for it."
+    },
+    {
+      "type": "range",
+      "id": "min_budget",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "$",
+      "label": "Minimum budget",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "max_budget",
+      "min": 100,
+      "max": 1000,
+      "step": 10,
+      "unit": "$",
+      "label": "Maximum budget",
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "default_budget",
+      "min": 20,
+      "max": 1000,
+      "step": 10,
+      "unit": "$",
+      "label": "Default budget",
+      "default": 90
+    }
+  ]
+}
+{% endschema %}
